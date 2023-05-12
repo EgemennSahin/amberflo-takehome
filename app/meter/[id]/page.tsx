@@ -13,7 +13,7 @@ export default async function MeterPage({
     <main>
       <Link href="/">Back</Link>
       <h1>Meter {id}</h1>
-      <Meter id={id} page="edit" />
+      <Meter id={id} />
       <SubmitButton />
     </main>
   );
