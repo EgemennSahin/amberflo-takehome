@@ -1,96 +1,130 @@
 "use client";
-
 import { useMeters } from "@/provider/MeterContext";
+import { MeterType } from "@/types/api";
 import {
   Box,
   Checkbox,
   FormControl,
-  InputLabel,
-  MenuItem,
   Select,
+  MenuItem,
+  TextField,
+  Button,
+  Grid,
+  Typography,
 } from "@mui/material";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
-
-const columns: GridColDef[] = [
-  { field: "field", headerName: "Field", width: 250 },
-  {
-    field: "value",
-    headerName: "Value",
-    width: 250,
-    editable: true,
-    renderCell: (params) => {
-      // If the field is active or used_for_billing, render a checkbox
-      if (["active", "used_for_billing"].includes(params.row.field)) {
-        return (
-          <Checkbox
-            checked={params.row.value}
-            onChange={(event) => {
-              params.row.value = event.target.checked;
-            }}
-          />
-        );
-      }
-      // If the field is type, render a select component
-      if (params.row.field === "type") {
-        return (
-          <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
-            <Select
-              value={params.row.value}
-              onChange={(event) => {
-                params.value = event.target.value;
-              }}
-            >
-              {["sum", "max", "unique_count"].map((type) => (
-                <MenuItem value={type}>{type}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        );
-      }
-      return params.row.value;
-    },
-  },
-];
+import { useState, useEffect } from "react";
 
 interface MeterProps {
   id: string;
 }
 
-// This is a 2 column table with the first column being the key and the second column being the value
-// The first column is not editable
 export default function Meter({ id }: MeterProps) {
-  // Get the meter from the context
   const { meters } = useMeters();
+  const [meter, setMeter] = useState<MeterType | null>(null);
 
-  // TODO: If meters is empty, fetch the meters from the API
-  const meter = meters.find((meter) => meter.id === id);
+  useEffect(() => {
+    const fetchedMeter = meters.find((meter) => meter.id === id);
+    if (!fetchedMeter) return;
 
-  console.log(meter);
+    setMeter(fetchedMeter);
+  }, [meters, id]);
+
+  const handleInputChange = (field: string, event: any) => {
+    if (!meter) return;
+
+    if (field === "active" || field === "used_for_billing") {
+      setMeter({ ...meter, [field]: event.target.checked });
+    } else if (field === "type") {
+      setMeter({ ...meter, [field]: event.target.value });
+    } else {
+      setMeter({ ...meter, [field]: event.target.value });
+    }
+  };
+
+  const handleSubmit = async () => {
+    const response = await fetch(`/api/update_meter`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(meter),
+    });
+  };
+
+  if (!meter)
+    return <div>Please return to the homepage and then navigate back.</div>;
   return (
     <Box sx={{ height: "100%", width: "100%" }}>
-      <DataGrid
-        rows={
-          meter
-            ? Object.entries(meter).map(([field, value], index) => ({
-                id: index,
-                field,
-                value,
-              }))
-            : []
-        }
-        columns={columns}
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 8,
-            },
-          },
-        }}
-        pageSizeOptions={[8]}
-        isCellEditable={(params) =>
-          !["id", "created_time", "updated_time"].includes(params.row.field)
-        }
-      />
+      <form>
+        <Box display="flex" flexDirection="column" alignItems="center" gap={2}>
+          {Object.entries(meter).map(([field, value]) => {
+            if (["active", "used_for_billing"].includes(field)) {
+              return (
+                <Box
+                  display="flex"
+                  justifyContent="space-between"
+                  width="50%"
+                  alignItems="center"
+                >
+                  <Typography variant="body1">{field}</Typography>
+                  <Checkbox
+                    checked={value}
+                    onChange={(event) => handleInputChange(field, event)}
+                  />
+                </Box>
+              );
+            } else if (field === "type") {
+              return (
+                <Box
+                  display="flex"
+                  justifyContent="space-between"
+                  width="50%"
+                  alignItems="center"
+                >
+                  <Typography variant="body1">{field}</Typography>
+                  <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+                    <Select
+                      value={value}
+                      onChange={(event) => handleInputChange(field, event)}
+                    >
+                      {["sum", "max", "unique_count"].map((type) => (
+                        <MenuItem key={type} value={type}>
+                          {type}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Box>
+              );
+            } else if (
+              !["id", "created_time", "updated_time"].includes(field)
+            ) {
+              return (
+                <Box
+                  display="flex"
+                  justifyContent="space-between"
+                  width="50%"
+                  alignItems="center"
+                >
+                  <Typography variant="body1">{field}</Typography>
+                  <TextField
+                    label={field}
+                    value={value}
+                    onChange={(event) => handleInputChange(field, event)}
+                  />
+                </Box>
+              );
+            } else {
+              return null;
+            }
+          })}
+        </Box>
+        <Box mt={2} display="flex" justifyContent="center">
+          <Button variant="contained" onClick={handleSubmit}>
+            Submit changes
+          </Button>
+        </Box>
+      </form>
     </Box>
   );
 }
