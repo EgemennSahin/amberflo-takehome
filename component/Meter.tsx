@@ -34,8 +34,6 @@ export default function Meter({ id }: MeterProps) {
 
     if (field === "active" || field === "used_for_billing") {
       setMeter({ ...meter, [field]: event.target.checked });
-    } else if (field === "type") {
-      setMeter({ ...meter, [field]: event.target.value });
     } else {
       setMeter({ ...meter, [field]: event.target.value });
     }
