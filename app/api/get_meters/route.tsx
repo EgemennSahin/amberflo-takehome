@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 
+export const revalidate = 0;
+
 export async function GET() {
   const res = await fetch(
     "https://take-home-exercise-api.herokuapp.com/meters",

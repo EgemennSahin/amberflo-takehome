@@ -13,8 +13,6 @@ export default async function Home() {
     .then((res) => res.json())
     .then((data) => data.data as Promise<MeterType[]>);
 
-  console.log(meters);
-
   return (
     <main>
       <MeterTable rows={meters} />

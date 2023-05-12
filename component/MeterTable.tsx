@@ -7,6 +7,7 @@ import { MeterType } from "@/types/api";
 import { useRouter } from "next/navigation";
 import { useMeters } from "@/provider/MeterContext";
 import { useEffect } from "react";
+import { Button } from "@mui/material";
 
 const columns: GridColDef[] = [
   { field: "id", headerName: "ID", width: 250 },
@@ -34,7 +35,6 @@ export default function MeterTable({ rows }: MeterTableProps) {
   // Set the meters in the context on first render
   useEffect(() => {
     setMeters(rows);
-    console.log(rows);
   }, []);
 
   const router = useRouter();
@@ -56,6 +56,9 @@ export default function MeterTable({ rows }: MeterTableProps) {
         }}
         pageSizeOptions={[5]}
       />
+      <Button onClick={() => router.push("/create-meter")} variant="contained">
+        Create Meter
+      </Button>
     </Box>
   );
 }
