@@ -1,4 +1,4 @@
-export interface Meter {
+export interface MeterType {
   id: string;
   api_name: string;
   display_name: string;
@@ -6,5 +6,5 @@ export interface Meter {
   used_for_billing: boolean;
   updated_time: string;
   created_time: string;
-  type: string;
+  type: "sum" | "max" | "unique_count";
 }

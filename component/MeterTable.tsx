@@ -3,7 +3,10 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { Meter } from "@/types/api";
+import { MeterType } from "@/types/api";
+import { useRouter } from "next/navigation";
+import { useMeters } from "@/provider/MeterContext";
+import { useEffect } from "react";
 
 const columns: GridColDef[] = [
   { field: "id", headerName: "ID", width: 250 },
@@ -22,14 +25,27 @@ const columns: GridColDef[] = [
 ];
 
 interface MeterTableProps {
-  meters: Meter[];
+  rows: MeterType[];
 }
 
-export default function MeterTable({ meters }: MeterTableProps) {
+export default function MeterTable({ rows }: MeterTableProps) {
+  const { setMeters } = useMeters();
+
+  // Set the meters in the context on first render
+  useEffect(() => {
+    setMeters(rows);
+    console.log(rows);
+  }, []);
+
+  const router = useRouter();
   return (
     <Box sx={{ height: 400, width: "100%" }}>
       <DataGrid
-        rows={meters}
+        onRowClick={(params, event) => {
+          // Route to the meter page
+          router.push(`/meter/${params.id}`);
+        }}
+        rows={rows}
         columns={columns}
         initialState={{
           pagination: {
