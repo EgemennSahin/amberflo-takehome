@@ -40,13 +40,16 @@ export default function Meter({ id }: MeterProps) {
   };
 
   const handleSubmit = async () => {
-    const response = await fetch(`/api/update_meter`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(meter),
-    });
+    const response = await fetch(
+      "https://amberflo-takehome.vercel.app/api/update_meter",
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(meter),
+      }
+    );
   };
 
   if (!meter)

@@ -33,13 +33,16 @@ export default function CreateMeter() {
   };
 
   const handleSubmit = async () => {
-    const response = await fetch(`/api/create_meter`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(newMeter),
-    });
+    const response = await fetch(
+      "https://amberflo-takehome.vercel.app/api/create_meter",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newMeter),
+      }
+    );
 
     // Reset form after successful submission
     if (response.ok) {
