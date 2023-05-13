@@ -10,7 +10,7 @@ Secondly, make sure you have the following environment variables:
 
 ```bash
 AMBERFLO_API_KEY=<your-api-key-here>
-ENVIRONMENT=""
+ENVIRONMENT="http://localhost:3000"
 ```
 
 Then, run the development server:
