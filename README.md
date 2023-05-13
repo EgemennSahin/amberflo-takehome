@@ -35,3 +35,4 @@ When deploying, make sure you change your ENVIRONMENT variable to your domain to
 - Checking for errors
   - Creating and updating meters currently send the user to the landing page without any confirmation except for the new data
 - More comprehensive README.MD that details the components and the way they work.
+- Delete meter functionality
