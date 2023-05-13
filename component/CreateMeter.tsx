@@ -36,7 +36,7 @@ export default function CreateMeter() {
 
   const handleSubmit = async () => {
     const response = await fetch(
-      "https://amberflo-takehome.vercel.app/api/create_meter",
+      `${process.env.ENVIRONMENT}/api/create_meter`,
       {
         method: "POST",
         headers: {

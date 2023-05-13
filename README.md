@@ -34,4 +34,3 @@ When deploying, make sure you change your ENVIRONMENT variable to your domain to
   - create_meter, get_meters, and update_meter API routes into meter route as they are each different methods (POST, GET, PUT)
 - Checking for errors
   - Creating and updating meters currently send the user to the landing page without any confirmation except for the new data
-  -
