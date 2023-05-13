@@ -12,6 +12,7 @@ import {
   Grid,
   Typography,
 } from "@mui/material";
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 
 interface MeterProps {
@@ -19,15 +20,32 @@ interface MeterProps {
 }
 
 export default function Meter({ id }: MeterProps) {
-  const { meters } = useMeters();
+  const router = useRouter();
+  const { meters, setMeters } = useMeters();
   const [meter, setMeter] = useState<MeterType | null>(null);
 
   useEffect(() => {
-    const fetchedMeter = meters.find((meter) => meter.id === id);
-    if (!fetchedMeter) return;
+    if (meters.length === 0) {
+      // Fetch meters from API
+      fetch(`${process.env.ENVIRONMENT}/api/get_meters`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Data:", data);
+          setMeters(data.data);
+        })
+        .catch((error) => console.error("Error fetching meters:", error));
+    } else {
+      const fetchedMeter = meters.find((meter) => meter.id === id);
+      if (!fetchedMeter) return;
 
-    setMeter(fetchedMeter);
-  }, [meters, id]);
+      setMeter(fetchedMeter);
+    }
+  }, [meters, id, setMeters]);
 
   const handleInputChange = (field: string, event: any) => {
     if (!meter) return;
@@ -41,7 +59,7 @@ export default function Meter({ id }: MeterProps) {
 
   const handleSubmit = async () => {
     const response = await fetch(
-      "https://amberflo-takehome.vercel.app/api/update_meter",
+      `${process.env.ENVIRONMENT}/api/update_meter`,
       {
         method: "PUT",
         headers: {
@@ -50,10 +68,11 @@ export default function Meter({ id }: MeterProps) {
         body: JSON.stringify(meter),
       }
     );
+
+    router.push("/");
   };
 
-  if (!meter)
-    return <div>Please return to the homepage and then navigate back.</div>;
+  if (!meter) return <div>Loading data...</div>;
   return (
     <Box sx={{ height: "100%", width: "100%" }}>
       <form>

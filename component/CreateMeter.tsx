@@ -11,6 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import { MeterType } from "@/types/api";
+import { useRouter } from "next/navigation";
 
 const initialMeterState: Partial<MeterType> = {
   api_name: "",
@@ -21,6 +22,7 @@ const initialMeterState: Partial<MeterType> = {
 };
 
 export default function CreateMeter() {
+  const router = useRouter();
   const [newMeter, setNewMeter] =
     useState<Partial<MeterType>>(initialMeterState);
 
@@ -44,12 +46,7 @@ export default function CreateMeter() {
       }
     );
 
-    // Reset form after successful submission
-    if (response.ok) {
-      setNewMeter(initialMeterState);
-    }
-
-    console.log(response);
+    router.push("/");
   };
 
   const meterFields = [
